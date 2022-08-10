@@ -5,8 +5,10 @@
 
 StartState = Class{__includes = BaseState}
 
+
 function StartState:init()
     self.currentMenuItem = 1
+
 end
 
 function StartState:update(dt)
@@ -22,6 +24,9 @@ end
 
 function StartState:render()
     love.graphics.setFont(gFonts['large'])
+
+
+    love.graphics.setColor(gCurrentFontColor)
 
     love.graphics.printf('Orb Match', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
 end

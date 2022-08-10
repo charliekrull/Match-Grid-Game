@@ -6,17 +6,11 @@ require 'src/Dependencies'
 
 love.graphics.setDefaultFilter('linear', 'linear')
 
---actual display window dimensions
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
 
---virtual resolution
-VIRTUAL_WIDTH = 1280 
-VIRTUAL_HEIGHT = 720
 
 
 function love.load()
-    love.window.setTitle("Double Match")
+    love.window.setTitle("Marble Match")
 
     math.randomseed(os.time())
 
@@ -36,7 +30,9 @@ function love.load()
 
     gSounds['music']:play()
 
-    love.keyboard.keysPressed = {}
+    gCurrentFontColor = table.randomChoice(gColors)
+
+    love.keyboard.keysPressed = {}    
 end
 
 function love.resize(w, h)
@@ -67,7 +63,10 @@ end
 function love.draw()
     push:start() --start drawing at virtual resolution
 
-    
+    for k, pair in ipairs(gBackgroundImages) do
+        love.graphics.draw(pair, 0, 0, 0, 4.71, 4.5)
+    end
+
     gStateMachine:render()
     push:finish()
 end

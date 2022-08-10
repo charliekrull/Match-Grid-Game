@@ -27,6 +27,5 @@ function PlayState:update(dt)
 end
 
 function PlayState:render()
-    love.graphics.clear()
     self.board:render()
 end
