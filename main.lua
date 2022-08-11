@@ -30,7 +30,9 @@ function love.load()
 
     gSounds['music']:play()
 
-    gCurrentFontColor = table.randomChoice(gColors)
+    gBackground = table.randomChoice(gBackgroundImages)
+
+    
 
     love.keyboard.keysPressed = {}    
 end
@@ -62,10 +64,9 @@ end
 
 function love.draw()
     push:start() --start drawing at virtual resolution
+    love.graphics.setColor(1, 1, 1, 1)
 
-    for k, pair in ipairs(gBackgroundImages) do
-        love.graphics.draw(pair, 0, 0, 0, 4.71, 4.5)
-    end
+    love.graphics.draw(gBackground,0, 0, 0, 1.28, 1.03 )
 
     gStateMachine:render()
     push:finish()

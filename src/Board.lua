@@ -9,6 +9,9 @@ function Board:init(x, y)
     self.matches = {}
 
     self:initializeOrbs()
+    
+
+    self.highlightedOrb = self.orbs[1][1]
 end
 
 function Board:initializeOrbs()
@@ -25,6 +28,8 @@ function Board:initializeOrbs()
     end
 end
 
+
+
 function Board:render()
     for y = 1, #self.orbs do
         for x = 1, #self.orbs[1] do
@@ -32,3 +37,4 @@ function Board:render()
         end
     end
 end
+

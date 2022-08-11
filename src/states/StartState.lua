@@ -8,8 +8,11 @@ StartState = Class{__includes = BaseState}
 
 function StartState:init()
     self.currentMenuItem = 1
+    self.fontColor = table.randomChoice(gOrbColors) --choose a random color to display the title
 
 end
+
+
 
 function StartState:update(dt)
     if love.keyboard.wasPressed('escape') then
@@ -23,10 +26,8 @@ end
 
 
 function StartState:render()
-    love.graphics.setFont(gFonts['large'])
 
-
-    love.graphics.setColor(gCurrentFontColor)
-
-    love.graphics.printf('Orb Match', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
+    love.graphics.setFont(gFonts['title'])
+    love.graphics.setColor(self.fontColor) 
+    love.graphics.printf('Marble Match', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
 end

@@ -7,9 +7,12 @@ LIGHT_BLUE = {0, 1, 1}
 DARK_BLUE = {0, 0.15, 1}
 PURPLE = {0.69, 0, 1}
 
---A table of the above
-gColors = {RED, YELLOW, GREEN, LIGHT_BLUE, DARK_BLUE, PURPLE}
+WHITE = {1, 1, 1}
+BLACK = {0, 0, 0}
 
+--A table of the above
+gOrbColors = {RED, YELLOW, GREEN, LIGHT_BLUE, DARK_BLUE, PURPLE}
+gAllColors = {RED, YELLOW, GREEN, LIGHT_BLUE, DARK_BLUE, PURPLE, WHITE, BLACK}
 
 --actual display window dimensions
 WINDOW_WIDTH = 1280
@@ -18,3 +21,6 @@ WINDOW_HEIGHT = 720
 --virtual resolution
 VIRTUAL_WIDTH = 1280 
 VIRTUAL_HEIGHT = 720
+
+BOARD_OFFSET_X = VIRTUAL_WIDTH / 2 - 256
+BOARD_OFFSET_Y = 16
