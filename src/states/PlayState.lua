@@ -53,20 +53,36 @@ function PlayState:update(dt)
             self.orbSelected = true
 
         else
-            self:swap(self.board.orbs[self.selectedY][self.selectedX], self.board.orbs[self.highlightY][self.highlightX])
+            local orb1 = self.board.orbs[self.selectedY][self.selectedX]
+            local orb2 = self.board.orbs[self.highlightY][self.highlightX]
+
+            local adj = math.abs((orb1.gridX - orb2.gridX) + (orb1.gridY - orb2.gridY)) --will be 1 if orthogonally adjacent
+            if adj == 1 then
+                self:swap(orb1, orb2)
+
+                
+            end
+
 
             --deselect
             self.orbSelected = false
             self.selectedX = nil
             self.selectedY = nil
 
+            self.board:calculateMatches()
+            self.board:removeMatches()
+
         end
 
     end
 
+    Timer.update(dt)
+
 end
 
 function PlayState:swap(Orb1, Orb2)
+    --Swaps two orbs with a temp variable
+
     local tempX, tempY = Orb1.x, Orb1.y
     local tempGridX, tempGridY = Orb1.gridX, Orb1.gridY
     local tempOrb = Orb1
@@ -74,12 +90,15 @@ function PlayState:swap(Orb1, Orb2)
     self.board.orbs[Orb1.gridY][Orb1.gridX] = Orb2
     self.board.orbs[Orb2.gridY][Orb2.gridX] = tempOrb
 
-    Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
-    Orb1.x, Orb1.y = Orb2.x, Orb2.y
+    Timer.tween(0.2, {
+        [Orb1] = {x = Orb2.x, y = Orb2.y},
+        [Orb2] = {x = tempX, y = tempY} 
+    })
 
-    --now we have 2 copys of Orb2, so use temp to restore Orb1
+    --instantly swap the grid coordinates, no need to tween those
+    Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
     Orb2.gridX, Orb2.gridY = tempGridX, tempGridY
-    Orb2.x, Orb2.y = tempX, tempY
+    
     
 end
 
@@ -108,10 +127,10 @@ function PlayState:render()
     love.graphics.setColor(WHITE)
     love.graphics.print('Score: '..tostring(self.score), 4, 4)
 
-   --[[ love.graphics.setColor(GREEN)
+    --[[love.graphics.setColor(GREEN)
     love.graphics.print('Highlighted: ('..self.highlightX..','..self.highlightY..')', 4, VIRTUAL_HEIGHT - 128)
     if self.orbSelected then
         love.graphics.print('Selected: ('..self.selectedX..','..self.selectedY..')', 4, VIRTUAL_HEIGHT - 64)
-    end]]
-    
+    end
+    ]]
 end
