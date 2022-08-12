@@ -20,6 +20,7 @@ end
 function PlayState:enter(params)
     self.level = params.level
     self.board = params.board or Board(VIRTUAL_WIDTH / 2 - 256, 16)
+    self:updateMatches(false)
 
     self.score = params.score or 0
 
@@ -59,6 +60,7 @@ function PlayState:update(dt)
             local adj = math.abs((orb1.gridX - orb2.gridX) + (orb1.gridY - orb2.gridY)) --will be 1 if orthogonally adjacent
             if adj == 1 then
                 self:swap(orb1, orb2)
+                self:updateMatches(true)
 
                 
             end
@@ -69,8 +71,6 @@ function PlayState:update(dt)
             self.selectedX = nil
             self.selectedY = nil
 
-            self.board:calculateMatches()
-            self.board:removeMatches()
 
         end
 
@@ -115,6 +115,40 @@ function PlayState:drawSelected(gridX, gridY)
     ((gridY - 1) * 64) + BOARD_OFFSET_Y + 44, 32)
 end
 
+function PlayState:updateMatches(scoreFlag)
+    self.selectedX = nil
+    self.selectedY = nil
+    self.orbSelected = false
+
+    local matches = self.board:calculateMatches()
+
+    if matches then
+        --scoring logic here
+        if scoreFlag then
+            for k, match in pairs(matches) do
+                self.score = self.score + #match * 50
+            end
+        end
+
+        --remove the orbs involved in a match
+        self.board:removeMatches()
+
+        local orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
+        local newOrbs = self.board:refill()
+
+        --when the tween is done, check for the matches we just created
+        Timer.tween(0.3, orbsToFall):finish(
+            function() 
+                Timer.tween(0.3, newOrbs):finish(
+                    function() 
+                        self:updateMatches(scoreFlag)
+                        
+                    end)
+            end)
+        
+         
+    end
+end
 
 function PlayState:render()
     self.board:render()

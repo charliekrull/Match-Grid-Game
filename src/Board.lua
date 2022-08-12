@@ -166,7 +166,7 @@ function Board:getFallingOrbs()
                     orb.gridY = spaceY
 
                     --reset old coordinates
-                    self.tiles[y][x] = nil
+                    self.orbs[y][x] = nil
 
                     --tween Y position to grid position * 64
                     tweens[orb] = {
@@ -194,26 +194,32 @@ function Board:getFallingOrbs()
         end
     end
 
-    --create replacement orbs from the top of the screen
-    for x = 1, 8 do --column by column
-        for y = 8, 1, -1 do
-            local orb = self.orbs[y][x]
-
-            if not orb then
-
-                --new orb with random color
-                local orb = Orb(x, y, math.random(6))
-                orb.y = -32 -- put it somewhat off screen so it falls on
-                self.orbs[y][x] = orb
-                
-                --create a new tween to return for this orb to fall
-                tweens[orb] = {
-                    y = (orb.GridY - 1) * 64
-                }
-            end
-            
-        end
-    end
+   
 
     return tweens
 end
+
+function Board:refill()
+    local orbsOffscreen = {}
+    local tweens = {}
+    --create replacement orbs at the top of the screen
+    for x = 1, 8 do
+        for y = 1, 8 do
+            if self.orbs[y][x] == nil then
+                self.orbs[y][x] = Orb(x, y, math.random(6))
+                local orb = self.orbs[y][x]
+                
+                orb.y = -128
+                table.insert(orbsOffscreen, orb)
+            end
+        end
+    end
+    --set up tween table
+    for k, orb in pairs(orbsOffscreen) do
+        tweens[orb] = {y = (orb.gridY - 1)*64}
+    end
+    
+    return tweens
+end
+
+
