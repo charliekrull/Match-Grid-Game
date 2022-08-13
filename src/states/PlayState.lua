@@ -20,6 +20,7 @@ end
 function PlayState:enter(params)
     self.level = params.level
     self.board = params.board or Board(VIRTUAL_WIDTH / 2 - 256, 16)
+    self.superOrbs = {}
     self:updateMatches(false)
 
     self.score = params.score or 0
@@ -129,9 +130,35 @@ function PlayState:updateMatches(scoreFlag)
                 self.score = self.score + #match * 50
             end
         end
+        for k, match in pairs(matches) do
+            if #match > 3 then --if it's a big match, get an orb that blows up in a special way
+                local toOrbify = table.randomChoice(match) 
+                local color = match[1].color
+                local level = math.min(#matches - 3, 6)
+                local type = table.randomChoice(gSuperOrbNames)
+
+                local orb = SuperOrb(toOrbify.gridX, toOrbify.gridY, color, level, type)
+                table.insert(self.superOrbs, orb)
+
+            end
+        end
 
         --remove the orbs involved in a match
         self.board:removeMatches()
+        --insert the supers in their place before refilling the board
+        for k, superOrb in pairs(self.superOrbs) do
+            if superOrb then
+                
+                self.board.orbs[superOrb.gridY][superOrb.gridX] = self.superOrbs[k]
+            end
+            
+        end
+
+        for i = 1, #self.superOrbs do
+            self.superOrbs[i] = nil
+        end
+
+
 
         local orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
         local newOrbs = self.board:refill()
@@ -168,3 +195,4 @@ function PlayState:render()
     end
     ]]
 end
+

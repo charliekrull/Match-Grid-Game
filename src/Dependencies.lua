@@ -15,6 +15,7 @@ require 'src/Util'
 require 'src/Orb'
 require 'src/Board'
 require 'src/constants'
+require 'src/SuperOrb'
 
 
 gSounds = {
@@ -27,6 +28,8 @@ gOrbImages = {}
 for i = 1, 6 do --6 basic colored orbs to start
     table.insert(gOrbImages, love.graphics.newImage('graphics/Orb_'..tostring(i)..'.png')) --https://opengameart.org/content/orbs-collection, orb images
 end
+
+gSuperOrbNames = {'vertical', 'horizontal', 'cross', 'radial'}
 
 gBackgroundImages = { love.graphics.newImage('graphics/Backgrounds/desertnight.png'),
     love.graphics.newImage('graphics/Backgrounds/fortress.png'),

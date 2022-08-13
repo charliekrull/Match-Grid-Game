@@ -135,7 +135,14 @@ end
 function Board:removeMatches()
     for k, match in pairs(self.matches) do
         for l, orb in pairs(match) do
+
+            if orb.type then
+                orb:activate()
+            end
             self.orbs[orb.gridY][orb.gridX] = nil
+
+            
+            
         end
     end
 
@@ -204,13 +211,16 @@ function Board:refill()
     local tweens = {}
     --create replacement orbs at the top of the screen
     for x = 1, 8 do
-        for y = 1, 8 do
+        for y = 8, 1, -1 do
+            local counter = 0
             if self.orbs[y][x] == nil then
                 self.orbs[y][x] = Orb(x, y, math.random(6))
                 local orb = self.orbs[y][x]
                 
-                orb.y = -128
+                orb.y = -128 - (counter * 64)
                 table.insert(orbsOffscreen, orb)
+
+                counter = counter + 1
             end
         end
     end
