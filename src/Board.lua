@@ -67,8 +67,11 @@ function Board:calculateMatches()
                         table.insert(match, self.orbs[y][x2])
                     end
 
+                  
+
                     --add this match to the table of matches
                     table.insert(matches, match)
+                    
                 end
 
                 matchNum = 1
@@ -82,7 +85,9 @@ function Board:calculateMatches()
             --go backwards from end of last row by matchNum
             for x = 8, 8 - matchNum + 1, -1 do
                 table.insert(match, self.orbs[y][x])
+                
             end
+            
 
             table.insert(matches, match)
         end
@@ -107,6 +112,7 @@ function Board:calculateMatches()
                     for y2 = y - 1, y - matchNum, - 1 do
                         table.insert(match, self.orbs[y2][x])
                     end
+                    
 
                     table.insert(matches, match)
                 end
@@ -121,10 +127,13 @@ function Board:calculateMatches()
             for y = 8, 8 - matchNum + 1, -1 do
                 table.insert(match, self.orbs[y][x])
             end
+           
 
             table.insert(matches, match)
         end
     end
+    
+    
     --store matches for future reference
     self.matches = matches
 
@@ -132,14 +141,16 @@ function Board:calculateMatches()
 
 end
 
-function Board:removeMatches()
+function Board:removeMatches(scoreFlag)
+    local points = 0
     for k, match in pairs(self.matches) do
         for l, orb in pairs(match) do
-
             if orb.type then
-                orb:activate()
+                points = points + self:fireSuper(orb.gridX, orb.gridY, orb.level, orb.type)
+                
             end
             self.orbs[orb.gridY][orb.gridX] = nil
+            points = points + 50
 
             
             
@@ -147,8 +158,7 @@ function Board:removeMatches()
     end
 
     self.matches = nil
-
-
+    return scoreFlag and points or 0
 end
 
 --[[
@@ -232,4 +242,67 @@ function Board:refill()
     return tweens
 end
 
+function Board:fireSuper(x, y, level, type)
+    local points = 0
+    if type == 'vertical' then
+        for k, tbl in pairs(self.orbs) do
+            for l, orb in pairs(tbl) do
+                if (orb.gridX == x) or ((orb.gridX == x + 1) and level >= 2) or ((orb.gridX == x - 1) and level == 3) then
+                    self.orbs[orb.gridY][orb.gridX] = nil
+                    points = points + 50
+                    
 
+                
+                end
+            end
+        end
+
+    elseif type == 'horizontal' then
+        local targetArea = {y}
+        if level >= 2 then
+            targetArea[#targetArea + 1] = y + 1
+
+        end
+
+        if level == 3 then
+            targetArea[#targetArea + 1] = y - 1
+        end
+        
+        for i, row in pairs(targetArea) do
+            for j, orb in pairs(self.orbs[row]) do
+                self.orbs[orb.gridY][orb.gridX] = nil
+                points = points + 50
+                
+            end
+        end
+
+    elseif type == 'cross' then
+
+        for k, tbl in pairs(self.orbs) do
+            for l, orb in pairs(tbl) do
+                if (orb.gridX == x) or ((orb.gridX == x + 1) and level >= 2) or ((orb.gridX == x - 1) and level == 3)
+                    or (orb.gridY == y) or ((orb.gridY == y + 1) and level >= 2) or (( orb.gridY == y - 1) and level == 3) then
+                        self.orbs[orb.gridY][orb.gridX] = nil
+                        points = points + 50
+                end
+
+                
+            end
+        end   
+    
+    elseif type == 'radial' then
+        
+        for k, tbl in pairs(self.orbs) do
+            for l, orb in pairs(tbl) do
+                if math.abs((orb.gridX - x) + (orb.gridY - y)) <= level then
+                    
+                    self.orbs[orb.gridY][orb.gridX] = nil
+                    points = points + 50
+                    
+                end
+            end
+        end
+        
+    end
+    return points
+end

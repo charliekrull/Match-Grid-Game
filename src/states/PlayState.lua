@@ -61,7 +61,10 @@ function PlayState:update(dt)
             local adj = math.abs((orb1.gridX - orb2.gridX) + (orb1.gridY - orb2.gridY)) --will be 1 if orthogonally adjacent
             if adj == 1 then
                 self:swap(orb1, orb2)
+
                 self:updateMatches(true)
+
+                
 
                 
             end
@@ -116,42 +119,41 @@ function PlayState:drawSelected(gridX, gridY)
     ((gridY - 1) * 64) + BOARD_OFFSET_Y + 44, 32)
 end
 
-function PlayState:updateMatches(scoreFlag)
+function PlayState:updateMatches(scoreFlag, matchTable)
     self.selectedX = nil
     self.selectedY = nil
     self.orbSelected = false
 
-    local matches = self.board:calculateMatches()
+    local matches = matchTable or self.board:calculateMatches()
 
     if matches then
-        --scoring logic here
-        if scoreFlag then
-            for k, match in pairs(matches) do
-                self.score = self.score + #match * 50
-            end
-        end
+        
         for k, match in pairs(matches) do
+            
             if #match > 3 then --if it's a big match, get an orb that blows up in a special way
                 local toOrbify = table.randomChoice(match) 
                 local color = match[1].color
-                local level = math.min(#matches - 3, 6)
+                local level = math.min(#match - 3, 3)
                 local type = table.randomChoice(gSuperOrbNames)
 
                 local orb = SuperOrb(toOrbify.gridX, toOrbify.gridY, color, level, type)
+
                 table.insert(self.superOrbs, orb)
+                
 
             end
+            
         end
 
         --remove the orbs involved in a match
-        self.board:removeMatches()
-        --insert the supers in their place before refilling the board
-        for k, superOrb in pairs(self.superOrbs) do
-            if superOrb then
-                
-                self.board.orbs[superOrb.gridY][superOrb.gridX] = self.superOrbs[k]
-            end
+        self.score = self.score + self.board:removeMatches(scoreFlag)
+        
+        
+        for k, orb in pairs(self.superOrbs) do
             
+            self.board.orbs[orb.gridY][orb.gridX] = orb
+            self.board.orbs[orb.gridY][orb.gridX].x = (orb.gridX - 1) * 64
+            self.board.orbs[orb.gridY][orb.gridX].y = (orb.gridY - 1) * 64
         end
 
         for i = 1, #self.superOrbs do
@@ -196,3 +198,14 @@ function PlayState:render()
     ]]
 end
 
+
+function PlayState:containsSuperOrb(tbl)
+    for k, element in pairs(tbl) do
+        if element.type then
+            return true
+
+        else
+            return false
+        end
+    end
+end
