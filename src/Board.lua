@@ -45,38 +45,36 @@ function Board:calculateMatches()
     --to count how many of the same block we've seen
     local matchNum = 1
 
+    
     --horizontal matches first
     for y = 1, 8 do
-        local colorToMatch = self.orbs[y][1].color
+        local colorToMatch = self.orbs[y][1].color 
+        
+            
         
         matchNum = 1
 
         for x = 2, 8 do
             if self.orbs[y][x].color == colorToMatch then
+            
                 matchNum = matchNum + 1
 
             else
-                --new color to count matches for
-                colorToMatch = self.orbs[y][x].color
-
-                --if we have a match of 3 or 4 up til then:
                 if matchNum >= 3 then
                     local match = {}
-                    --add each orb to the table that is the match
-                    for x2 = x-1, x - matchNum, -1 do
+                    for x2 = x - 1, x - matchNum, -1 do
                         table.insert(match, self.orbs[y][x2])
                     end
-
-                  
-
-                    --add this match to the table of matches
                     table.insert(matches, match)
-                    
-                end
 
+
+                
+                end
+                colorToMatch = self.orbs[y][x].color
                 matchNum = 1
             end
 
+            
         end
         --account for end of row matches
         if matchNum >= 3 then
@@ -98,6 +96,8 @@ function Board:calculateMatches()
     for x = 1, 8 do
         local colorToMatch = self.orbs[1][x].color
 
+        
+
         matchNum = 1
 
         for y = 2, 8 do
@@ -105,7 +105,7 @@ function Board:calculateMatches()
                 matchNum = matchNum + 1
 
             else
-                colorToMatch = self.orbs[y][x].color
+                
                 if matchNum >= 3 then
                     local match = {}
 
@@ -116,7 +116,7 @@ function Board:calculateMatches()
 
                     table.insert(matches, match)
                 end
-
+                colorToMatch = self.orbs[y][x].color
                 matchNum = 1
             end
         end
@@ -127,11 +127,13 @@ function Board:calculateMatches()
             for y = 8, 8 - matchNum + 1, -1 do
                 table.insert(match, self.orbs[y][x])
             end
-           
+        
 
             table.insert(matches, match)
         end
     end
+
+
     
     
     --store matches for future reference
@@ -147,18 +149,23 @@ function Board:removeMatches(scoreFlag)
         for l, orb in pairs(match) do
             if orb.type then
                 points = points + self:fireSuper(orb.gridX, orb.gridY, orb.level, orb.type)
-                
             end
-            self.orbs[orb.gridY][orb.gridX] = nil
+            
+               
+            
             points = points + 50
+            self.orbs[orb.gridY][orb.gridX] = nil
 
             
             
         end
     end
 
-    self.matches = nil
-    return scoreFlag and points or 0
+    if not scoreFlag then
+        points = 0
+    end
+    
+    return points
 end
 
 --[[

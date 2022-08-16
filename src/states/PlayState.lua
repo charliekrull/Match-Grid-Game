@@ -145,8 +145,12 @@ function PlayState:updateMatches(scoreFlag, matchTable)
             
         end
 
+        
+
         --remove the orbs involved in a match
-        self.score = self.score + self.board:removeMatches(scoreFlag)
+        
+       self.score = self.score + self.board:removeMatches(scoreFlag)
+          
         
         
         for k, orb in pairs(self.superOrbs) do
@@ -160,21 +164,28 @@ function PlayState:updateMatches(scoreFlag, matchTable)
             self.superOrbs[i] = nil
         end
 
-
-
-        local orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
-        local newOrbs = self.board:refill()
+        
+        
+        self.orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
+        self.newOrbs = self.board:refill()
+        
+        
 
         --when the tween is done, check for the matches we just created
-        Timer.tween(0.3, orbsToFall):finish(
+        
+        
+        
+            
+        Timer.tween(0.3, self.orbsToFall):finish(
             function() 
-                Timer.tween(0.3, newOrbs):finish(
+                Timer.tween(0.3, self.newOrbs):finish(
                     function() 
                         self:updateMatches(scoreFlag)
                         
                     end)
             end)
         
+            
          
     end
 end
@@ -204,8 +215,9 @@ function PlayState:containsSuperOrb(tbl)
         if element.type then
             return true
 
-        else
-            return false
+    
         end
     end
+    
+    return false
 end

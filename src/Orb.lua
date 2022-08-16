@@ -12,9 +12,10 @@ function Orb:init(x, y, color) --color is 1-6
     self.y = (self.gridY - 1) * 64
 
     self.color = color
+    self.alpha = 1 --for fading out later
 end
 
 function Orb:render(x, y)
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(1, 1, 1, self.alpha)
     love.graphics.draw(gOrbImages[self.color], self.x + x, self.y + y, 0, 0.5, 0.5)
 end
