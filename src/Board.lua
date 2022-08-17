@@ -258,13 +258,14 @@ end
 
 function Board:fireSuper(x, y, level, type)
     local points = 0
-    local refOrb = self.orbs[y][x]
+    
+    local match = {}
     if type == 'vertical' then
         for k, tbl in pairs(self.orbs) do
             for l, orb in pairs(tbl) do
                 if (orb.gridX == x) or ((orb.gridX == x + 1) and level >= 2) or ((orb.gridX == x - 1) and level == 3) then
-                    self.orbs[orb.gridY][orb.gridX] = nil
-                    points = points + 50
+                    table.insert(match, self.orbs[orb.gridY][orb.gridX])
+                    
                     
 
                 
@@ -285,8 +286,8 @@ function Board:fireSuper(x, y, level, type)
         
         for i, row in pairs(targetArea) do
             for j, orb in pairs(self.orbs[row]) do
-                self.orbs[orb.gridY][orb.gridX] = nil
-                points = points + 50
+                table.insert(match, self.orbs[orb.gridY][orb.gridX])
+                
                 
             end
         end
@@ -297,8 +298,8 @@ function Board:fireSuper(x, y, level, type)
             for l, orb in pairs(tbl) do
                 if (orb.gridX == x) or ((orb.gridX == x + 1) and level >= 2) or ((orb.gridX == x - 1) and level == 3)
                     or (orb.gridY == y) or ((orb.gridY == y + 1) and level >= 2) or (( orb.gridY == y - 1) and level == 3) then
-                        self.orbs[orb.gridY][orb.gridX] = nil
-                        points = points + 50
+                        table.insert(match, self.orbs[orb.gridY][orb.gridX])
+                        
                 end
 
                 
@@ -310,16 +311,17 @@ function Board:fireSuper(x, y, level, type)
         for k, tbl in pairs(self.orbs) do
             for l, orb in pairs(tbl) do
                 
-                if self:distance(orb, refOrb) <= level then
+                if not(self.orbs[y][x] == orb) and self:distance(orb, self.orbs[y][x]) <= level then
                     
-                    self.orbs[orb.gridY][orb.gridX] = nil
-                    points = points + 50
+                    table.insert(match, self.orbs[orb.gridY][orb.gridX])
+                    
                     
                 end
             end
         end
         
     end
+    table.insert(self.matches, match)
     return points
 end
 

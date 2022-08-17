@@ -174,6 +174,7 @@ function PlayState:updateMatches(scoreFlag, matchTable)
         
         self.orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
         self.newOrbs = self.board:refill()
+        self.orbsToFade = self.board:getFadingOrbs()
 
         
         
@@ -182,7 +183,7 @@ function PlayState:updateMatches(scoreFlag, matchTable)
         
         
         
-            
+           
         Timer.tween(0.3, self.orbsToFall):finish(
             function() 
                 Timer.tween(0.3, self.newOrbs):finish(
