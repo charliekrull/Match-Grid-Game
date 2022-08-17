@@ -149,8 +149,14 @@ function PlayState:updateMatches(scoreFlag, matchTable)
 
         --remove the orbs involved in a match
         
-       self.score = self.score + self.board:removeMatches(scoreFlag)
-          
+
+        
+        
+        self.score = self.score + self.board:removeMatches(scoreFlag)
+
+    
+        
+        
         
         
         for k, orb in pairs(self.superOrbs) do
@@ -168,6 +174,7 @@ function PlayState:updateMatches(scoreFlag, matchTable)
         
         self.orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
         self.newOrbs = self.board:refill()
+
         
         
 

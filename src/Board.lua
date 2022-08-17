@@ -145,21 +145,28 @@ end
 
 function Board:removeMatches(scoreFlag)
     local points = 0
+    local tweens = {}
     for k, match in pairs(self.matches) do
         for l, orb in pairs(match) do
             if orb.type then
                 points = points + self:fireSuper(orb.gridX, orb.gridY, orb.level, orb.type)
             end
             
+            
+            
                
             
             points = points + 50
+            
             self.orbs[orb.gridY][orb.gridX] = nil
 
             
             
         end
+
     end
+
+    
 
     if not scoreFlag then
         points = 0
@@ -251,6 +258,7 @@ end
 
 function Board:fireSuper(x, y, level, type)
     local points = 0
+    local refOrb = self.orbs[y][x]
     if type == 'vertical' then
         for k, tbl in pairs(self.orbs) do
             for l, orb in pairs(tbl) do
@@ -301,7 +309,8 @@ function Board:fireSuper(x, y, level, type)
         
         for k, tbl in pairs(self.orbs) do
             for l, orb in pairs(tbl) do
-                if math.abs((orb.gridX - x) + (orb.gridY - y)) <= level then
+                
+                if self:distance(orb, refOrb) <= level then
                     
                     self.orbs[orb.gridY][orb.gridX] = nil
                     points = points + 50
@@ -312,4 +321,27 @@ function Board:fireSuper(x, y, level, type)
         
     end
     return points
+end
+
+function Board:getFadingOrbs()
+    local tweens = {}
+
+    for m, match in pairs(self.matches) do
+        for o, orb in pairs(match) do
+            tweens[orb] = {alpha = 0}
+        end
+    end
+
+    return tweens
+end
+
+function Board:distance(orb1, orb2) --using our good olf friend Pythagoras
+
+    local xDist = math.abs(orb1.gridX - orb2.gridX)
+    local yDist = math.abs(orb1.gridY - orb2.gridY)
+
+    local totalDist = math.sqrt(xDist ^ 2 + yDist ^ 2)
+
+    return totalDist
+
 end
