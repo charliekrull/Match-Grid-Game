@@ -19,8 +19,8 @@ require 'src/SuperOrb'
 
 
 gSounds = {
-    ['music'] = love.audio.newSource('sounds/periwinkle.mp3', 'stream') --Axton Crolley, "Periwinkle" https://opengameart.org/content/happy-go-lucky-puzzle
-
+    ['music'] = love.audio.newSource('sounds/periwinkle.mp3', 'stream'), --Axton Crolley, "Periwinkle" https://opengameart.org/content/happy-go-lucky-puzzle
+    ['pop1'] = love.audio.newSource('sounds/pop1.ogg', 'stream') --user cogitollc https://opengameart.org/content/pop-sounds
 }
 
 gOrbImages = {}

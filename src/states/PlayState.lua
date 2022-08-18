@@ -119,12 +119,12 @@ function PlayState:drawSelected(gridX, gridY)
     ((gridY - 1) * 64) + BOARD_OFFSET_Y + 44, 32)
 end
 
-function PlayState:updateMatches(scoreFlag, matchTable)
+function PlayState:updateMatches(scoreFlag)
     self.selectedX = nil
     self.selectedY = nil
     self.orbSelected = false
 
-    local matches = matchTable or self.board:calculateMatches()
+    local matches = self.board:calculateMatches()
 
     if matches then
         
@@ -149,10 +149,14 @@ function PlayState:updateMatches(scoreFlag, matchTable)
 
         --remove the orbs involved in a match
         
+        self.orbsToFade = self.board:getFadingOrbs()
 
+        --Timer.tween(0.3, orbsToFade):finish(function()
         
         
         self.score = self.score + self.board:removeMatches(scoreFlag)
+        gSounds['pop1']:play()
+        
 
     
         
@@ -174,7 +178,7 @@ function PlayState:updateMatches(scoreFlag, matchTable)
         
         self.orbsToFall = self.board:getFallingOrbs() --returns a table for tweening
         self.newOrbs = self.board:refill()
-        self.orbsToFade = self.board:getFadingOrbs()
+        
 
         
         
@@ -192,6 +196,8 @@ function PlayState:updateMatches(scoreFlag, matchTable)
                         
                     end)
             end)
+
+        --end)
         
             
          

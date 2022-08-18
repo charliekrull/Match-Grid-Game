@@ -154,6 +154,7 @@ function Board:removeMatches(scoreFlag)
             
             
             
+            
                
             
             points = points + 50
@@ -165,12 +166,14 @@ function Board:removeMatches(scoreFlag)
         end
 
     end
+    self.matches = nil
 
     
 
     if not scoreFlag then
         points = 0
     end
+
     
     return points
 end
@@ -237,11 +240,14 @@ function Board:refill()
     for x = 1, 8 do
         for y = 8, 1, -1 do
             local counter = 0
-            if self.orbs[y][x] == nil then
-                self.orbs[y][x] = Orb(x, y, math.random(6))
-                local orb = self.orbs[y][x]
+            local orb = self.orbs[y][x]
+            if not orb then
                 
+                orb = Orb(x, y, math.random(6))
                 orb.y = -128 - (counter * 64)
+                self.orbs[y][x] = orb
+                
+                
                 table.insert(orbsOffscreen, orb)
 
                 counter = counter + 1
