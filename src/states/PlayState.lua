@@ -78,12 +78,28 @@ function PlayState:update(dt)
                     [orb1] = {x = orb2.x, y = orb2.y},
                     [orb2] = {x = orb1.x, y = orb1.y}
                 }):finish(function()
-                    self:updateMatches(true)
+                    if self.board:calculateMatches() then
+                        self:updateMatches(true)
+                    else
+                        local tempX, tempY = orb1.gridX, orb1.gridY
+
+                        orb1.gridX, orb1.gridY = orb2.gridX, orb2.gridY
+
+                        orb2.gridX, orb2.gridY = tempX, tempY
+
+                        self.board.orbs[orb1.gridY][orb1.gridX] = orb1
+                        self.board.orbs[orb2.gridY][orb2.gridX] = orb2
+                        Timer.tween(0.2, {
+                            [orb1] = {x = orb2.x, y = orb2.y},
+                            [orb2] = {x = orb1.x, y = orb1.y}
+                        })
+                    end
                 end)
                 
 
                 
             end
+
 
 
 
@@ -101,32 +117,7 @@ function PlayState:update(dt)
 
 end
 
-function PlayState:swap(Orb1, Orb2)
-    --Swaps two orbs with a temp variable
 
-    local tempX, tempY = Orb1.x, Orb1.y
-    local tempGridX, tempGridY = Orb1.gridX, Orb1.gridY
-    local tempOrb = Orb1
-
-    Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
-    Orb2.gridX, Orb2.gridY = tempGridX, tempGridY
-
-    self.board.orbs[Orb1.gridY][Orb1.gridX] = Orb2
-    self.board.orbs[Orb2.gridY][Orb2.gridX] = tempOrb
-
-    Timer.tween(0.2, {
-        [Orb1] = {x = Orb2.x, y = Orb2.y},
-        [Orb2] = {x = tempX, y = tempY} 
-    })
-
-   --[[ --instantly swap the grid coordinates, no need to tween those
-    Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
-    Orb2.gridX, Orb2.gridY = tempGridX, tempGridY]]
-
-    
-    
-    
-end
 
 function PlayState:drawHighlight(gridX, gridY)
     love.graphics.setLineWidth(4)
@@ -141,11 +132,11 @@ function PlayState:drawSelected(gridX, gridY)
     ((gridY - 1) * 64) + BOARD_OFFSET_Y + 44, 32)
 end
 
-function PlayState:updateMatches(scoreFlag)
+function PlayState:updateMatches(scoreFlag, orb1, orb2)
     self.selectedX = nil
     self.selectedY = nil
     self.orbSelected = false
-
+    
     local matches = self.board:calculateMatches()
 
     if matches then
@@ -174,7 +165,7 @@ function PlayState:updateMatches(scoreFlag)
         --Timer.tween(0.3, orbsToFade):finish(function()
         
         
-        self.score = self.score + self.board:removeMatches(scoreFlag)
+        self.score = self.score + self.board:removeMatches(scoreFlag, orb1, orb2)
         gSounds['pop1']:stop()
         gSounds['pop1']:play()      
         
@@ -214,7 +205,10 @@ function PlayState:updateMatches(scoreFlag)
 
         --end)
         
+
+        
     end
+    
 end
 
 function PlayState:render()
