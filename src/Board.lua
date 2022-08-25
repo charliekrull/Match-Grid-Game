@@ -132,9 +132,6 @@ function Board:calculateMatches()
             table.insert(matches, match)
         end
     end
-
-
-    
     
     --store matches for future reference
     self.matches = matches
@@ -345,11 +342,14 @@ end
 
 function Board:distance(orb1, orb2) --using our good olf friend Pythagoras
 
-    local xDist = math.abs(orb1.gridX - orb2.gridX)
-    local yDist = math.abs(orb1.gridY - orb2.gridY)
+    if orb1 and orb2 then
+        local xDist = math.abs(orb1.gridX - orb2.gridX)
+        local yDist = math.abs(orb1.gridY - orb2.gridY)
 
-    local totalDist = math.sqrt(xDist ^ 2 + yDist ^ 2)
+        local totalDist = math.sqrt(xDist ^ 2 + yDist ^ 2)
 
-    return totalDist
+        return totalDist
+    end
 
 end
+

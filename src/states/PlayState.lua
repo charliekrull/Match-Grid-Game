@@ -58,16 +58,33 @@ function PlayState:update(dt)
             local orb1 = self.board.orbs[self.selectedY][self.selectedX]
             local orb2 = self.board.orbs[self.highlightY][self.highlightX]
 
+           
+
             local adj = math.abs((orb1.gridX - orb2.gridX) + (orb1.gridY - orb2.gridY)) --will be 1 if orthogonally adjacent
             if adj == 1 then
-                self:swap(orb1, orb2)
+                local tempX = orb1.gridX
+                local tempY = orb1.gridY
 
-                self:updateMatches(true)
+                orb1.gridX = orb2.gridX
+                orb1.gridY = orb2.gridY
 
+                orb2.gridX = tempX
+                orb2.gridY = tempY
+                self.board.orbs[orb1.gridY][orb1.gridX] = orb1
+
+                self.board.orbs[orb2.gridY][orb2.gridX] = orb2
+
+                Timer.tween(0.2, {
+                    [orb1] = {x = orb2.x, y = orb2.y},
+                    [orb2] = {x = orb1.x, y = orb1.y}
+                }):finish(function()
+                    self:updateMatches(true)
+                end)
                 
 
                 
             end
+
 
 
             --deselect
@@ -91,6 +108,9 @@ function PlayState:swap(Orb1, Orb2)
     local tempGridX, tempGridY = Orb1.gridX, Orb1.gridY
     local tempOrb = Orb1
 
+    Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
+    Orb2.gridX, Orb2.gridY = tempGridX, tempGridY
+
     self.board.orbs[Orb1.gridY][Orb1.gridX] = Orb2
     self.board.orbs[Orb2.gridY][Orb2.gridX] = tempOrb
 
@@ -99,9 +119,11 @@ function PlayState:swap(Orb1, Orb2)
         [Orb2] = {x = tempX, y = tempY} 
     })
 
-    --instantly swap the grid coordinates, no need to tween those
+   --[[ --instantly swap the grid coordinates, no need to tween those
     Orb1.gridX, Orb1.gridY = Orb2.gridX, Orb2.gridY
-    Orb2.gridX, Orb2.gridY = tempGridX, tempGridY
+    Orb2.gridX, Orb2.gridY = tempGridX, tempGridY]]
+
+    
     
     
 end
@@ -145,23 +167,16 @@ function PlayState:updateMatches(scoreFlag)
             
         end
 
-        
-
         --remove the orbs involved in a match
         
-        self.orbsToFade = self.board:getFadingOrbs()
+        --self.orbsToFade = self.board:getFadingOrbs()
 
         --Timer.tween(0.3, orbsToFade):finish(function()
         
         
         self.score = self.score + self.board:removeMatches(scoreFlag)
-        gSounds['pop1']:play()
-        
-
-    
-        
-        
-        
+        gSounds['pop1']:stop()
+        gSounds['pop1']:play()      
         
         for k, orb in pairs(self.superOrbs) do
             
@@ -199,8 +214,6 @@ function PlayState:updateMatches(scoreFlag)
 
         --end)
         
-            
-         
     end
 end
 
