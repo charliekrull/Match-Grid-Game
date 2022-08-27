@@ -9,6 +9,7 @@ StartState = Class{__includes = BaseState}
 function StartState:init()
     self.currentMenuItem = 1
     self.fontColor = table.randomChoice(gOrbColors) --choose a random color to display the title
+    self.transitionAlpha = 0
 
 end
 
@@ -20,8 +21,11 @@ function StartState:update(dt)
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateMachine:change('play', {level = 1})
+        Timer.tween(0.5, {[self] = {transitionAlpha = 1}}):finish(function()
+        gStateMachine:change('play', {level = 1}) end)
     end
+
+    Timer.update(dt)
 end
 
 
@@ -30,4 +34,7 @@ function StartState:render()
     love.graphics.setFont(gFonts['title'])
     love.graphics.setColor(self.fontColor) 
     love.graphics.printf('Marble Match', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
+
+    love.graphics.setColor(1, 1, 1, self.transitionAlpha)
+    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
 end
