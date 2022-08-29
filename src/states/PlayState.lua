@@ -5,27 +5,26 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
     self.score = 0
-    self.timer = 60
 
     self.highlightX = 4
     self.highlightY = 4
 
     self.orbSelected = false
 
-    self.transitionAlpha = 1
-
-    self.canInput = false
-
-    self.levelLabelY = -50
     
 
 end
 
 function PlayState:enter(params)
     self.level = params.level
+    self.levelLabelY = -50
     self.board = Board(VIRTUAL_WIDTH / 2 - 256, 16)
     self.superOrbs = {}
     self:updateMatches(false)
+
+    self.transitionAlpha = 1
+
+    self.canInput = false
 
     
     self.goal = 3000 + (self.level * 1000)
@@ -40,11 +39,16 @@ function PlayState:enter(params)
                 Timer.tween(0.5, {[self] = {levelLabelY = VIRTUAL_HEIGHT}}):finish( --tween label offscreen
             
                 function() Timer.tween(0.5, {[self] = {transitionAlpha = 0}}):finish(function() self.canInput = true self.levelLabelY = -50
-                    self.roundTimer = Timer.every(1, function() self.timeLeft = self.timeLeft - 1 end)
+                    self.roundTimer = Timer.every(1, function() self.timeLeft = self.timeLeft - 1
+                    if self.timeLeft <= 5 then
+                        gSounds['clock']:stop()
+                        gSounds['clock']:play()
+                    end end)
                  end)--fade in and allow input
             end)
         end)
     end)
+
 
 
     
@@ -99,13 +103,18 @@ function PlayState:update(dt)
 
                     self.board.orbs[orb2.gridY][orb2.gridX] = orb2
 
+                    self.canInput = false
+
                     Timer.tween(0.2, {
                         [orb1] = {x = orb2.x, y = orb2.y},
                         [orb2] = {x = orb1.x, y = orb1.y}
                     }):finish(function()
                         if self.board:calculateMatches() then
                             self:updateMatches(true)
+                            
                         else
+                            gSounds['error']:stop()
+                            gSounds['error']:play()
                             local tempX, tempY = orb1.gridX, orb1.gridY
 
                             orb1.gridX, orb1.gridY = orb2.gridX, orb2.gridY
@@ -117,11 +126,14 @@ function PlayState:update(dt)
                             Timer.tween(0.2, {
                                 [orb1] = {x = orb2.x, y = orb2.y},
                                 [orb2] = {x = orb1.x, y = orb1.y}
-                            })
+                            }):finish(function() self.canInput = true end)
                         end
+                    
                     end)
                     
-
+                else
+                    gSounds['error']:stop()
+                    gSounds['error']:play()
                     
                 end
 
@@ -147,8 +159,10 @@ function PlayState:update(dt)
             gStateMachine:change('game-over', {score = self.score, goal = self.goal, level = self.level})
 
         else
+            Timer.tween(0.5, {[self] = {transitionAlpha = 1}}):finish(function()
+            gStateMachine:change('level-transition', {level = self.level, score = self.score})
 
-            gStateMachine:change('play', {level = self.level + 1})
+            end)
         end
         
     end
@@ -180,6 +194,7 @@ function PlayState:updateMatches(scoreFlag)
     local matches = self.board:calculateMatches()
 
     if matches then
+        self.canInput = false
         
         for k, match in pairs(matches) do
             
@@ -248,7 +263,8 @@ function PlayState:updateMatches(scoreFlag)
 
         --end)
         
-
+    else
+        self.canInput = true
         
     end
     

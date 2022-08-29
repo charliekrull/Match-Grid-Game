@@ -33,7 +33,7 @@ function StartState:render()
 
     love.graphics.setFont(gFonts['title'])
     love.graphics.setColor(self.fontColor) 
-    love.graphics.printf('Marble Match', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Orbulus', 0, VIRTUAL_HEIGHT/2 - 32, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setColor(1, 1, 1, self.transitionAlpha)
     love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)

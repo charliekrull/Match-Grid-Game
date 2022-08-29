@@ -10,6 +10,7 @@ require 'src/states/BaseState'
 require 'src/states/StartState'
 require 'src/states/PlayState'
 require 'src/states/GameOverState'
+require 'src/states/LevelTransitionState'
 
 require 'src/StateMachine'
 require 'src/Util'
@@ -21,7 +22,9 @@ require 'src/SuperOrb'
 
 gSounds = {
     ['music'] = love.audio.newSource('sounds/periwinkle.mp3', 'stream'), --Axton Crolley, "Periwinkle" https://opengameart.org/content/happy-go-lucky-puzzle
-    ['pop1'] = love.audio.newSource('sounds/pop1.ogg', 'stream') --user cogitollc https://opengameart.org/content/pop-sounds
+    ['pop1'] = love.audio.newSource('sounds/pop1.ogg', 'static'), --user cogitollc https://opengameart.org/content/pop-sounds
+    ['error'] = love.audio.newSource('sounds/error-click.wav', 'static'),
+    ['clock'] = love.audio.newSource('sounds/clock.wav', 'static')
 }
 
 gOrbImages = {}

@@ -10,7 +10,7 @@ love.graphics.setDefaultFilter('linear', 'linear')
 
 
 function love.load()
-    love.window.setTitle("Marble Match")
+    love.window.setTitle("Orbulus")
 
     math.randomseed(os.time())
 
@@ -24,7 +24,8 @@ function love.load()
     gStateMachine = StateMachine{
         ['start'] = function() return StartState() end,
         ['play'] = function() return PlayState() end,
-        ['game-over'] = function() return GameOverState() end
+        ['game-over'] = function() return GameOverState() end,
+        ['level-transition'] = function() return LevelTransitionState() end
         
     }
     gStateMachine:change('start')
