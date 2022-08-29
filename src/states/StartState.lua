@@ -20,7 +20,7 @@ function StartState:update(dt)
         love.event.quit()
     end
 
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or love.keyboard.wasPressed('space') then
         Timer.tween(0.5, {[self] = {transitionAlpha = 1}}):finish(function()
         gStateMachine:change('play', {level = 1}) end)
     end

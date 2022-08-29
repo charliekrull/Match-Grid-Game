@@ -13,7 +13,7 @@ function LevelTransitionState:update(dt)
         love.event.quit()
     end
 
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or love.keyboard.wasPressed('space') then
         gStateMachine:change('play', {level = self.level + 1})
     end
 
